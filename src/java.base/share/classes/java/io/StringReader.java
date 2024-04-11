@@ -210,4 +210,19 @@ public class StringReader extends Reader {
             str = null;
         }
     }
+
+    @Override
+    public long transferTo(Writer out) throws IOException {
+        Objects.requireNonNull(out, "out");
+        synchronized (lock) {
+            ensureOpen();
+            if (next >= length) {
+                return 0;
+            }
+            int len = length - next;
+            out.write(str, next, len);
+            next = length;
+            return len;
+        }
+    }
 }

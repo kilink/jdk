@@ -170,6 +170,21 @@ public class CharArrayReader extends Reader {
         }
     }
 
+    @Override
+    public long transferTo(Writer out) throws IOException {
+        Objects.requireNonNull(out, "out");
+        synchronized (lock) {
+            ensureOpen();
+            if (pos >= count) {
+                return 0L;
+            }
+            int avail = count - pos;
+            out.write(buf, pos, avail);
+            pos = count;
+            return avail;
+        }
+    }
+
     /**
      * Skips characters. If the stream is already at its end before this method
      * is invoked, then no characters are skipped and zero is returned.
