@@ -51,6 +51,9 @@ import sun.reflect.generics.repository.ConstructorRepository;
  */
 public abstract sealed class Executable extends AccessibleObject
     implements Member, GenericDeclaration permits Constructor, Method {
+
+    private static final String[] ARG_NAME_CACHE = { "arg0", "arg1", "arg2", "arg3", "arg4", "arg5" };
+
     /*
      * Only grant package-visibility to the constructor.
      */
@@ -419,6 +422,10 @@ public abstract sealed class Executable extends AccessibleObject
         return parameterData().parameters.clone();
     }
 
+    private static String argName(int idx) {
+        return idx < ARG_NAME_CACHE.length ? ARG_NAME_CACHE[idx] : "arg" + idx;
+    }
+
     private Parameter[] synthesizeAllParams() {
         final int realparams = getParameterCount();
         final Parameter[] out = new Parameter[realparams];
@@ -427,7 +434,7 @@ public abstract sealed class Executable extends AccessibleObject
             // modifiers?  Probably not in the general case, since
             // we'd have no way of knowing about them, but there
             // may be specific cases.
-            out[i] = new Parameter("arg" + i, 0, this, i);
+            out[i] = new Parameter(argName(i), 0, this, i);
         return out;
     }
 
